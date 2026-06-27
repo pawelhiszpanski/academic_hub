@@ -9,11 +9,32 @@
 </head>
 <body class="bg-light">
 
-    <nav class="navbar navbar-dark bg-dark mb-4">
-        <div class="container">
+    <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand fw-bold" href="{% url 'semester_detail' subject.field_of_study.id subject.semester %}?stream={{ subject.stream }}">
                 <i class="bi bi-arrow-left me-2"></i> Wróć do planu semestru
             </a>
+
+            <div class="navbar-nav flex-row align-items-center">
+                {% if user.is_authenticated %}
+                    <span class="navbar-text text-light me-3 small d-flex align-items-center">
+                        <i class="bi bi-person-circle text-primary me-2 fs-5"></i> Cześć, <strong class="text-white ms-1">{{ user.username }}</strong>!
+                    </span>
+                    <form action="{% url 'logout' %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger fw-medium">
+                            <i class="bi bi-box-arrow-left me-1"></i> Wyloguj
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-sm btn-outline-light fw-medium me-2 px-3">
+                        Zaloguj się
+                    </a>
+                    <a href="{% url 'register' %}" class="btn btn-sm btn-primary fw-medium px-3 shadow-sm">
+                        Zarejestruj się
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </nav>
 
@@ -32,12 +53,12 @@
     </div>
 
     <div class="container mb-5">
-        <h3 class="mb-4 text-secondary border-bottom pb-2">Dostępne zasoby i skrypty</h3>
+        <div class="row g-4 justify-content-center">
 
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
+            <div class="col-lg-8">
+                <h3 class="mb-4 text-secondary border-bottom pb-2">Dostępne zasoby i skrypty</h3>
 
-                <div class="list-group shadow-sm rounded-3">
+                <div class="list-group shadow-sm rounded-3 mb-4">
                     {% for resource in resources %}
                         <a href="{{ resource.url }}" target="_blank" class="list-group-item list-group-item-action p-3 d-flex align-items-center justify-content-between hover-item">
                             <div class="d-flex align-items-center">
@@ -65,12 +86,57 @@
                         </a>
                     {% empty %}
                         <div class="alert alert-info border-0 shadow-sm" role="alert">
-                            <i class="bi bi-folder-symlink me-2"></i> Nie dodano jeszcze żadnych materiałów dla tego przedmiotu. Bądź pierwszym, który coś dorzuci!
+                            <i class="bi bi-folder-symlink me-2"></i> Nie dodano jeszcze żadnych materiałów dla tego przedmiotu.
                         </div>
                     {% endfor %}
                 </div>
-
             </div>
+
+            <div class="col-lg-4">
+                <h3 class="mb-4 text-secondary border-bottom pb-2">Współdzielenie</h3>
+
+                {% if user.is_authenticated %}
+                    <div class="card border-0 shadow-sm bg-white rounded-3 p-4">
+                        <h4 class="h5 fw-bold text-dark mb-3"><i class="bi bi-plus-circle-fill text-success me-2"></i>Dodaj nowy zasób</h4>
+
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                <label for="id_title" class="form-label small fw-bold text-secondary mb-1">Nazwa materiału</label>
+                                <input type="text" name="title" id="id_title" maxlength="200" required class="form-control bg-light" placeholder="np. Notatki przed kolokwium 2">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_url" class="form-label small fw-bold text-secondary mb-1">Link URL</label>
+                                <input type="url" name="url" id="id_url" required class="form-control bg-light" placeholder="https://drive.google.com/...">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="id_resource_type" class="form-label small fw-bold text-secondary mb-1">Typ zajęć</label>
+                                <select name="resource_type" id="id_resource_type" class="form-select bg-light">
+                                    <option value="LEC" selected>Wykład</option>
+                                    <option value="LAB">Laboratorium</option>
+                                    <option value="PROJ">Projekt</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-success w-100 fw-bold py-2 shadow-sm">
+                                <i class="bi bi-cloud-upload me-1"></i> Udostępnij link
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="card border-0 shadow-sm bg-white rounded-3 p-4 text-center">
+                        <div class="fs-1 text-muted mb-2"><i class="bi bi-lock-fill"></i></div>
+                        <h4 class="h5 fw-bold text-dark mb-2">Chcesz pomóc innym?</h4>
+                        <p class="text-muted small mb-3">Tylko zalogowani studenci mogą dodawać nowe materiały dydaktyczne do bazy danych.</p>
+                        <a href="{% url 'login' %}" class="btn btn-primary w-100 fw-bold shadow-sm mb-2">Zaloguj się</a>
+                        <a href="{% url 'register' %}" class="text-decoration-none small text-muted">Stwórz nowe konto</a>
+                    </div>
+                {% endif %}
+            </div>
+
         </div>
     </div>
 

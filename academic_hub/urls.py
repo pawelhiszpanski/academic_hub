@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from resources import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +25,7 @@ urlpatterns = [
     path('field/<int:field_id>', views.field_detail, name='field_detail'),
     path('field/<int:field_id>/semester/<int:semester_id>', views.semester_detail, name='semester_detail'),
     path('subjects/<int:subject_id>/materials', views.subject_resources, name='subject_resources'),
+    path('login', auth_views.LoginView.as_view(template_name='resources/login.html'), name='login'),
+    path('logout', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
+    path('register/', views.register, name='register'),
 ]
