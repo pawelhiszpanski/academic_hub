@@ -23,4 +23,5 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('field/<int:field_id>', views.field_detail, name='field_detail'),
     path('field/<int:field_id>/semester/<int:semester_id>', views.semester_detail, name='semester_detail'),
+    path('subjects/<int:subject_id>/materials', views.subject_resources, name='subject_resources'),
 ]

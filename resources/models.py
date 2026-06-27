@@ -38,3 +38,24 @@ class Subject(models.Model):
     def __str__(self):
         return f"{self.name} (Semester: {self.semester} - {self.field_of_study.name})"
 
+
+class Resource(models.Model):
+    title = models.CharField(max_length=200)
+    url = models.URLField()
+
+    RESOURCE_CHOICES = [
+        ('LEC', 'Wykład'),
+        ('LAB', 'Laboratorium'),
+        ('PROJ', 'Projekt')
+    ]
+
+    resource_type = models.CharField(
+        max_length=4,
+        choices=RESOURCE_CHOICES,
+        default='LEC'
+    )
+
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="resources")
+
+    def __str__(self):
+        return f"{self.title} ({self.resource_type})"

@@ -22,7 +22,7 @@ def semester_detail(request, field_id, semester_id):
 
     selected_stream = request.GET.get('stream', 'ALL')
 
-    subjects = Subject.objects.filter(field_of_study=field, semester=semester_id).filter(Q(stream='ALL') | Q(stream=selected_stream))
+    subjects = Subject.objects.filter(field_of_study=field, semester=semester_id, stream=selected_stream)
     context = {
         'field': field,
         'subjects': subjects,
@@ -30,3 +30,12 @@ def semester_detail(request, field_id, semester_id):
         'selected_stream': selected_stream,
     }
     return render(request, 'resources/semester_detail.html', context)
+
+def subject_resources(request, subject_id):
+    subject = Subject.objects.get(id=subject_id)
+    resources = subject.resources.all()
+    context = {
+        'subject': subject,
+        'resources': resources,
+    }
+    return render(request, 'resources/subject_resources.html', context)
