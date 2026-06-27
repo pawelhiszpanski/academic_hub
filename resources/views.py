@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from .models import *
+from django.db.models import Q
 
 # Create your views here.
 def index(request):
@@ -19,10 +19,14 @@ def field_detail(request, field_id):
 
 def semester_detail(request, field_id, semester_id):
     field = FieldOfStudy.objects.get(id=field_id)
-    subjects = Subject.objects.filter(field_of_study=field, semester=semester_id)
+
+    selected_stream = request.GET.get('stream', 'ALL')
+
+    subjects = Subject.objects.filter(field_of_study=field, semester=semester_id).filter(Q(stream='ALL') | Q(stream=selected_stream))
     context = {
         'field': field,
         'subjects': subjects,
         'semester_number': semester_id,
+        'selected_stream': selected_stream,
     }
     return render(request, 'resources/semester_detail.html', context)
