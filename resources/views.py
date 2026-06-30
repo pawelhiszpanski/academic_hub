@@ -5,9 +5,13 @@ from .forms import ResourceForm
 
 # Create your views here.
 def index(request):
+    user_profile = None
+    if request.user.is_authenticated:
+        user_profile, is_created = Profile.objects.get_or_create(user=request.user) # it returns 1. user and 2. if was created(?)
     fields = FieldOfStudy.objects.all()
     context = {
         'fields': fields,
+        'profile': user_profile,
     }
     return render(request, 'resources/index.html', context)
 
